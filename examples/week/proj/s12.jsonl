@@ -1,0 +1,2 @@
+{"sessionId": "s12", "type": "assistant", "timestamp": "2026-10-23T09:00:00Z", "requestId": "rm12a", "message": {"id": "m12a", "model": "claude-opus-5-5", "usage": {"input_tokens": 40000, "output_tokens": 6000, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 300000}}}
+{"sessionId": "s12", "type": "assistant", "timestamp": "2026-10-23T09:30:00Z", "requestId": "rm12b", "message": {"id": "m12b", "model": "claude-haiku-5-5", "usage": {"input_tokens": 8000, "output_tokens": 2000, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 50000}}}
