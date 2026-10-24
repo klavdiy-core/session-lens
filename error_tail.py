@@ -96,7 +96,11 @@ def main(argv=None):
     parser.add_argument("--session", default=None, help="session id (default: the most recently written session)")
     parser.add_argument("-n", type=int, default=5, help="how many errors (default 5)")
     args = parser.parse_args(argv)
-    rows = last_errors(args.dir, args.session, args.n)
+    try:
+        rows = last_errors(args.dir, args.session, args.n)
+    except FileNotFoundError as e:
+        print(f"dir: ERROR ({e})")
+        return 2
     _, last = _collect(args.dir)
     session = args.session or (max(last, key=last.get) if last else None)
     if session is None or session not in last:

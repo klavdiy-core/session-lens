@@ -58,7 +58,8 @@ concurrency: 2 sessions with a record in 30 min after 2026-10-24T10:00:00Z
 
 How it counts:
 - A session is the record's `sessionId` (else the file name). Real layout is `<project>/<session id>.jsonl`, many sessions per project folder; sub-agent files in `<session>/subagents/` count to their parent.
-- **Streaming writes the same assistant message several times.** Records with the same `message.id` + `requestId` count once; without that, every number would be inflated several times over.
+- **Streaming writes the same assistant message several times.** Records with the same `message.id` + `requestId` count once; without that, every number would be inflated several times over. The copy with the most output tokens is kept. On about 16,000 real messages (Claude Code 2.1.300 to 2.1.310) all copies carried the same counts; if a version ever writes a growing count, the last one still wins.
+- **A wrong `--dir` is an error (exit 2), not an empty week.** A `--since` without a zone is read as UTC.
 - `cache_read_share = cache_read / (input + cache_create + cache_read + output)`.
 
 Honest limits: raw token counts, not priced, and cache reads are not weighted the way any plan weights them. It never prints "% of your allowance": it cannot know your limit. Concurrency counts sessions that wrote in the window, not sessions busy at the same instant.

@@ -56,7 +56,11 @@ def main(argv=None):
     p.add_argument("--dir", default=str(DEFAULT_DIR), help="transcript folder (default: ~/.claude/projects)")
     p.add_argument("--window", type=int, default=30, help="minutes before/after a change to count errors (default 30)")
     a = p.parse_args(argv)
-    ch = scan(a.dir, a.window)
+    try:
+        ch = scan(a.dir, a.window)
+    except FileNotFoundError as e:
+        print(f"dir: ERROR ({e})")
+        return 2
     if not ch:
         print("no Claude Code version change inside any session")
         return 0

@@ -13,7 +13,7 @@ import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-from cc_jsonl import iter_records
+from cc_jsonl import iter_records, unique_usage
 
 DEFAULT_DIR = Path.home() / ".claude" / "projects"
 
@@ -28,18 +28,13 @@ def _day(ts):
 def summarize(root, days=7, today=None, top=5):
     today = today or datetime.utcnow().date()
     first = today - timedelta(days=days - 1)
-    seen, out, sess = set(), {}, {}
-    for session, _project, rec in iter_records(root):
-        msg = rec.get("message") or {}
-        u = msg.get("usage")
-        d = _day(rec.get("timestamp"))
-        if not isinstance(u, dict) or d is None or not (first <= d <= today):
+    out, sess = {}, {}
+    rows, _ = unique_usage(iter_records(root))
+    for session, _project, rec in rows:
+        msg, d = rec["message"], _day(rec.get("timestamp"))
+        u = msg["usage"]
+        if d is None or not (first <= d <= today):
             continue
-        key = (msg.get("id"), rec.get("requestId"))
-        if key[0] and key[1]:
-            if key in seen:
-                continue
-            seen.add(key)
         cr = int(u.get("cache_read_input_tokens") or 0)
         total = (int(u.get("input_tokens") or 0) + int(u.get("output_tokens") or 0)
                  + int(u.get("cache_creation_input_tokens") or 0) + cr)
@@ -70,7 +65,11 @@ def main(argv=None):
     p.add_argument("--today", default=None, help="YYYY-MM-DD (UTC), default: today")
     a = p.parse_args(argv)
     today = date.fromisoformat(a.today) if a.today else None
-    s = summarize(a.dir, a.days, today)
+    try:
+        s = summarize(a.dir, a.days, today)
+    except FileNotFoundError as e:
+        print(f"dir: ERROR ({e})")
+        return 2
     print(f"day (UTC)    tokens        cache_read    sessions  by model")
     for d in sorted(s["days"]):
         r = s["days"][d]
