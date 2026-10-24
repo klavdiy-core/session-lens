@@ -1,8 +1,38 @@
 # session-lens
 
-Two small readers of your Claude Code transcripts: where your usage went, and what just broke.
+Small readers of your Claude Code transcripts: where your usage went, and what just broke.
 
-> RU: два маленьких инструмента поверх транскриптов Claude Code. **burn-ledger** — какая сессия съела лимит перечитыванием старого контекста и сколько сессий навалились сразу после сброса. **error-tail** — последние ошибки инструментов одной строкой, чтобы не листать всю сессию.
+> RU: маленькие инструменты поверх транскриптов Claude Code. **week-ledger** — неделя по дням и моделям и «сегодня против обычного». **version-watch** — обновился ли Claude Code посреди сессии и что сломалось после. **burn-ledger** — какая сессия съела лимит перечитыванием старого контекста. **error-tail** — последние ошибки одной строкой.
+
+![synthetic data, real output: a week where the last day is x8.9 the usual, and a session where Claude Code updated from 2.1.300 to 2.1.310 with 0 errors before and 4 after](examples/week_version.png)
+
+## week-ledger: is it my week, or the limits?
+
+"People are burning their weekly allowance in 1-2 days. Same workflows." Before you argue about it, look at your
+own week: tokens per day (UTC), split by model, sessions per day, the sessions that re-read the most cached context,
+and today against the median of the earlier days that had any use.
+
+```
+python week_ledger.py              # the last 7 days
+python week_ledger.py --days 14
+```
+
+If today is x9 your usual and three sessions re-read 97% of their tokens from cache, the week is your long sessions;
+if your days look like every other week, it is not your workflow.
+
+## version-watch: did an update land mid-session?
+
+"Your background Claude Code update blew up my work." Every transcript record carries the Claude Code `version` that
+wrote it. version-watch lists each session where it changed mid-way, when, from what to what, and the failed tool
+calls in the 30 minutes before and after (`--window`). A count, not a cause: it tells you where to look.
+
+```
+python version_watch.py
+2026-10-24T11:02:00Z  focus-session  2.1.300 -> 2.1.310  errors 0 before / 4 after (30 min)
+```
+
+The examples in `examples/week` and `examples/version` are made up (`examples/make_examples.py` writes them and the
+picture above from the tools' real output); no numbers here come from anyone's real transcripts.
 
 Standard library only, Python 3.8+. They read `~/.claude/projects/**/*.jsonl` (or `--dir`), print numbers or one line per error, and never print your prompts or Claude's answers.
 
