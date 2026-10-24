@@ -1,0 +1,2 @@
+{"type":"assistant","sessionId":"s2","timestamp":"2026-10-24T10:01:00Z","message":{"content":[{"type":"tool_use","id":"a2","name":"Bash","input":{"command":"npm test"}}]}}
+{"type":"user","sessionId":"s2","timestamp":"2026-10-24T10:01:03Z","message":{"content":[{"type":"tool_result","tool_use_id":"a2","is_error":true,"content":"Exit code 2\nnpm ERR! test failed"}]}}

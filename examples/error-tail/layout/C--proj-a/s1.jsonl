@@ -1,0 +1,2 @@
+{"type":"assistant","sessionId":"s1","timestamp":"2026-10-24T10:00:00Z","message":{"content":[{"type":"tool_use","id":"a1","name":"Bash","input":{"command":"make"}}]}}
+{"type":"user","sessionId":"s1","timestamp":"2026-10-24T10:00:02Z","message":{"content":[{"type":"tool_result","tool_use_id":"a1","is_error":true,"content":"Exit code 1\nstarting build\nbuild stopped at step 3"}]}}
