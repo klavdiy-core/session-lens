@@ -1,0 +1,6 @@
+{"type":"assistant","timestamp":"2026-10-24T10:00:00Z","message":{"content":[{"type":"tool_use","id":"a1","name":"Bash","input":{"command":"python run.py"}}]}}
+{"type":"user","timestamp":"2026-10-24T10:00:02Z","message":{"content":[{"type":"tool_result","tool_use_id":"a1","is_error":true,"content":"Traceback (most recent call last):\n  File \"run.py\", line 2, in <module>\n    raise ValueError('x')\nValueError: x"}]}}
+{"type":"assistant","timestamp":"2026-10-24T10:01:00Z","message":{"content":[{"type":"tool_use","id":"a2","name":"Bash","input":{"command":"make"}}]}}
+{"type":"user","timestamp":"2026-10-24T10:01:05Z","message":{"content":[{"type":"tool_result","tool_use_id":"a2","is_error":false,"content":"Exit code 2\nsrc/a.c:3: error: expected ';'"}]}}
+{"type":"assistant","timestamp":"2026-10-24T10:02:00Z","message":{"content":[{"type":"tool_use","id":"a3","name":"Read","input":{"file_path":"x.txt"}}]}}
+{"type":"user","timestamp":"2026-10-24T10:02:01Z","message":{"content":[{"type":"tool_result","tool_use_id":"a3","is_error":false,"content":"hello"}]}}
