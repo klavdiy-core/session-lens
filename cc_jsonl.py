@@ -4,7 +4,20 @@ Reads Claude Code session files (*.jsonl). Real layout: <projects>/<project fold
 project folder holds many sessions. Stdlib only. Reads and yields records; never prints content.
 """
 import json
+from datetime import datetime, timezone
 from pathlib import Path
+
+
+def parse_ts(text):
+    """One reading of time for every tool: an aware UTC datetime, or None. A time without a zone is UTC
+    (Claude Code writes ...Z; the tools used to read the rest three different ways)."""
+    if not text:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(text).strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return (dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt).astimezone(timezone.utc)
 
 
 def iter_records(root):
@@ -28,9 +41,10 @@ def iter_records(root):
 
 
 def usage_key(rec):
-    """Streamed copies of one assistant message share message.id + requestId; None when either is missing."""
+    """Streamed copies of one assistant message share message.id (+ requestId when it is written); None without an id.
+    A record with an id but no requestId is still one message: four such copies counted four times before."""
     msg = rec.get("message") or {}
-    return (msg["id"], rec["requestId"]) if msg.get("id") and rec.get("requestId") else None
+    return (msg["id"], rec.get("requestId") or "") if msg.get("id") else None
 
 
 def _output(rec):

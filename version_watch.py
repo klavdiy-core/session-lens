@@ -10,17 +10,14 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from cc_jsonl import iter_records
+from cc_jsonl import iter_records, parse_ts
 from error_tail import _failed, _text
 
 DEFAULT_DIR = Path.home() / ".claude" / "projects"
 
 
 def _ts(text):
-    try:
-        return datetime.fromisoformat(str(text).replace("Z", "+00:00"))
-    except ValueError:
-        return None
+    return parse_ts(text)          # aware UTC: a session mixing ...Z and zone-less times used to crash the sort
 
 
 def scan(root, window_min=30):

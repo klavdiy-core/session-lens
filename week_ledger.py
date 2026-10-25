@@ -10,23 +10,22 @@ Raw tokens, not priced; never a share of any allowance. Prints numbers only.
 import argparse
 import statistics
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from cc_jsonl import iter_records, unique_usage
+from cc_jsonl import iter_records, parse_ts, unique_usage
 
 DEFAULT_DIR = Path.home() / ".claude" / "projects"
 
 
 def _day(ts):
-    try:
-        return datetime.fromisoformat(str(ts).replace("Z", "+00:00")).date()
-    except ValueError:
-        return None
+    """The UTC day of a timestamp (01:30+03:00 is the evening before, in UTC)."""
+    dt = parse_ts(ts)
+    return dt.date() if dt else None
 
 
 def summarize(root, days=7, today=None, top=5):
-    today = today or datetime.utcnow().date()
+    today = today or datetime.now(timezone.utc).date()
     first = today - timedelta(days=days - 1)
     out, sess = {}, {}
     rows, _ = unique_usage(iter_records(root))
@@ -64,7 +63,14 @@ def main(argv=None):
     p.add_argument("--days", type=int, default=7)
     p.add_argument("--today", default=None, help="YYYY-MM-DD (UTC), default: today")
     a = p.parse_args(argv)
-    today = date.fromisoformat(a.today) if a.today else None
+    if a.days < 1:
+        print(f"days: ERROR ({a.days}: give 1 or more)")
+        return 2
+    try:
+        today = date.fromisoformat(a.today) if a.today else None
+    except ValueError:
+        print(f"today: ERROR ({a.today!r} is not a date like 2026-10-24)")
+        return 2
     try:
         s = summarize(a.dir, a.days, today)
     except FileNotFoundError as e:

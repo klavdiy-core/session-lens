@@ -12,13 +12,13 @@ No install: clone, then run any tool from anywhere. With no `--dir` they read yo
 
 ```
 git clone https://github.com/klavdiy-core/session-lens && cd session-lens
-python week_ledger.py   --dir examples/week
+python week_ledger.py   --dir examples/week --today 2026-10-24     # the example week is 18-24 Oct
 python version_watch.py --dir examples/version
 python burn_ledger.py   --dir examples/burn-ledger/layout --since 2026-10-24T10:00:00Z
-python error_tail.py    --dir examples/error-tail/layout
+python error_tail.py    --dir examples/error-tail
 ```
 
-A missing `--dir`, or a `--since` that is not a date, is an error (exit 2), never an empty table that looks like "no usage".
+A missing `--dir`, a `--since` or `--today` that is not a date, or `--days` below 1 is an error (exit 2), never an empty table that looks like "no usage". All four read times the same way: in UTC, and a time without a zone counts as UTC.
 
 ## week-ledger: is it my week, or the limits?
 
@@ -72,7 +72,7 @@ concurrency: 2 sessions with a record in 30 min after 2026-10-24T10:00:00Z
 
 How it counts:
 - A session is the record's `sessionId` (else the file name). Real layout is `<project>/<session id>.jsonl`, many sessions per project folder; sub-agent files in `<session>/subagents/` count to their parent.
-- **Streaming writes the same assistant message several times.** Records with the same `message.id` + `requestId` count once; without that, every number would be inflated several times over. The copy with the most output tokens is kept. On about 16,000 real messages (Claude Code 2.1.300 to 2.1.310) all copies carried the same counts; if a version ever writes a growing count, the last one still wins.
+- **Streaming writes the same assistant message several times.** Records with the same `message.id` (+ `requestId` when it is written) count once; without that, every number would be inflated several times over. The copy with the most output tokens is kept. On about 16,000 real messages (Claude Code 2.1.300 to 2.1.310) all copies carried the same counts; if a version ever writes a growing count, the last one still wins.
 - **A wrong `--dir` is an error (exit 2), not an empty week.** A `--since` without a zone is read as UTC.
 - `cache_read_share = cache_read / (input + cache_create + cache_read + output)`.
 
