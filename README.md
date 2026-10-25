@@ -6,6 +6,20 @@ Small readers of your Claude Code transcripts: where your usage went, and what j
 
 ![synthetic data, real output: a week where the last day is x8.9 the usual, and a session where Claude Code updated from 2.1.300 to 2.1.310 with 0 errors before and 4 after](examples/week_version.png)
 
+## Try it first on the bundled examples
+
+No install: clone, then run any tool from anywhere. With no `--dir` they read your own `~/.claude/projects`.
+
+```
+git clone https://github.com/klavdiy-core/session-lens && cd session-lens
+python week_ledger.py   --dir examples/week
+python version_watch.py --dir examples/version
+python burn_ledger.py   --dir examples/burn-ledger/layout --since 2026-10-24T10:00:00Z
+python error_tail.py    --dir examples/error-tail/layout
+```
+
+A missing `--dir`, or a `--since` that is not a date, is an error (exit 2), never an empty table that looks like "no usage".
+
 ## week-ledger: is it my week, or the limits?
 
 "People are burning their weekly allowance in 1-2 days. Same workflows." Before you argue about it, look at your
