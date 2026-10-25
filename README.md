@@ -78,6 +78,24 @@ How it counts:
 
 Honest limits: raw token counts, not priced, and cache reads are not weighted the way any plan weights them. It never prints "% of your allowance": it cannot know your limit. Concurrency counts sessions that wrote in the window, not sessions busy at the same instant.
 
+### SDK or interactive: `--by-entry`
+
+"The Agents SDK burns the 5-hour window in 30 minutes; the CLI doing the same work takes hours." Every transcript
+record says how the session was started (`entrypoint`: `cli` for interactive Claude Code, `sdk-cli` for `claude -p`
+and the SDK, others as they appear). `--by-entry` puts them side by side, per reply (one unique assistant message):
+
+```
+$ python burn_ledger.py --by-entry
+entry       sessions  replies  tokens/reply  cache_read/reply  tokens/output_token
+cli               44    31258        351151            347107                421.9
+sdk-cli          108      228         38303             27142                 99.7  (0.1x the cli's cache read per reply)
+```
+
+That is the author's own machine, and it shows the opposite of the complaint: there the SDK sessions are short
+automated turns and the interactive ones run with a near-million-token context, so a reply in the CLI re-reads ten
+times more. Per-reply numbers follow the size of the context, so compare like with like (the same task, run both
+ways, from fresh sessions) before blaming either. Tokens only: how a plan's 5-hour window weighs them is not public.
+
 ## error-tail: what broke?
 
 An agent runs in the background; its error is buried somewhere in a long session. error-tail prints the last few tool errors of one session: time, tool, and one line.
