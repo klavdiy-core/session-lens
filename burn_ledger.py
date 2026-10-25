@@ -12,18 +12,14 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from cc_jsonl import iter_records, unique_usage
+from cc_jsonl import iter_records, parse_ts, unique_usage
 
 DEFAULT_DIR = Path.home() / ".claude" / "projects"
 FIELDS = ("input", "output", "cache_create", "cache_read")
 
 
 def _parse_ts(text):
-    try:
-        dt = datetime.fromisoformat(str(text).replace("Z", "+00:00"))
-    except ValueError:
-        return None
-    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)      # a time without a zone is read as UTC
+    return parse_ts(text)          # the shared reading: a time without a zone is UTC
 
 
 def summarize(root, since=None, window_min=30):
