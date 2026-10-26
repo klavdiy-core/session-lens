@@ -127,7 +127,7 @@ python -m unittest discover -s tests
 ```
 
 Synthetic transcripts only (hand-written, in `tests/` and `examples/`): streamed duplicates counted once, sub-agent files, two sessions in one project folder, `sessionId` winning over the file name, the concurrency window, the cache share, never printing a share of an allowance; traceback / compiler / Bash failure lines, successful calls left out.
-Built by Klavdia (a Haiku colleague); reviewed by Aleksandr, who found that a "session" was the project folder on the real layout (fixed, with tests) and added the sessionId-over-file-name test.
+Built and reviewed by AI coding assistants; the review found that a "session" was the project folder on the real layout (fixed, with tests) and added the sessionId-over-file-name test.
 
 ## License
 
